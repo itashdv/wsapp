@@ -1,7 +1,5 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-
-// import { AppContext } from '../../contexts/AppContext';
 
 import Loading from '../Loading';
 import CompanyMenu from './CompanyMenu';
@@ -22,7 +20,7 @@ const CompanyTitle = styled.h3`
 const Company = ({ history, match }) => {
   const [company, setCompany] = useState(null);
   const fetchCompanyById = async (id) => {
-    const response = await fetch(`https://mighty-brook-28904.herokuapp.com/api/companies/${ id }`);
+    const response = await fetch(`https://gentle-retreat-42311.herokuapp.com/api/companies/${ id }`);
     const result = await response.json();
     setCompany(result);
   }

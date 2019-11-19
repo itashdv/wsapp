@@ -11,7 +11,7 @@ const StyledHome = styled.div`
 `;
 
 const Home = () => {
-    const { companies, currentCompany, dispatch } = useContext(AppContext);
+    const { companies, currentCompany, dispatch1 } = useContext(AppContext);
     const { lat, lng, error } = usePosition();
     // if (error) console.log(error);
     return (
@@ -60,7 +60,7 @@ const Home = () => {
                                 }}
                                 onClick = {
                                     () => {
-                                        dispatch({
+                                        dispatch1({
                                             type: 'SELECT_CURRENT_COMPANY',
                                             company: company
                                         });
@@ -80,7 +80,7 @@ const Home = () => {
                                 }}
                                 onCloseClick = {
                                     () => {
-                                        dispatch({ type: 'RESET_CURRENT_COMPANY' });
+                                        dispatch1({ type: 'RESET_CURRENT_COMPANY' });
                                     }
                                 }
                             >
