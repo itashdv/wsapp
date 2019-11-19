@@ -1,60 +1,70 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 
 import MenuCategory from './MenuCategory';
-import Loading from '../Loading';
 
 const StyledCompanyMenu = styled.div`
-  & > h4 {
-    text-align: center;
-  }
-  & > p {
-    text-align: center;
-  }
+    & > h3, p {
+        text-align: center;
+    }
+    & > img {
+        width: 100%;
+        height: auto;
+    }
 `;
 
-const MenuImage = styled.img`
-  width: 100%;
-  height: auto;
-`;
+// fetch menu url..
+const URL = 'https://gentle-retreat-42311.herokuapp.com/api/menus';
 
 const CompanyMenu = (props) => {
-  const [menu, setMenu] = useState(null);
-  const fetchMenu = async (id) => {
-    const response = await fetch(`https://gentle-retreat-42311.herokuapp.com/api/menus/${ id }`);
-    const result = await response.json();
-    console.log(result);
-    setMenu(result);
-  }
-  useEffect(() => {
-    fetchMenu(props.companyId);
-  }, [props.companyId]);
-  return (
-    <StyledCompanyMenu>
-      {
-        !menu && (
-          <Loading />
-        )
-      }
-      {
-        menu && (
-          <>
-            <hr />
-            <h4>{ menu.menu.name }</h4>
-            <p>{ menu.menu.description }</p>
-            <MenuImage src={ menu.menu.image.url } />
-            {
-              menu.categories.map((category, index) => {
-                return (
-                  <MenuCategory key={ index } category={ category } />
-                )
-              })
+    const [menu, setMenu] = useState(null);
+    // fetching company menu from api..
+    useEffect(() => {
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
+        const loadData = () => {
+            try {
+                axios.get(`${ URL }/${ props.companyId }`, { cancelToken: source.token }).then(result => {
+                    setMenu(result.data);
+                });
+            } catch(error) {
+                if (axios.isCancel(error)) {
+                    console.log('Api call canceled!');
+                } else {
+                    throw error;
+                }
             }
-          </>
-        )
-      }
-    </StyledCompanyMenu>
-  );
-}
+        };
+        loadData();
+        // cleaning up the api call on component unmount..
+        return () => {
+            source.cancel();
+        };
+    }, [props.companyId]);
+    return (
+        <StyledCompanyMenu>
+            {
+                !menu && (
+                    <h3>Loading menu..</h3>
+                )
+            }
+            {
+                menu && (
+                    <>
+                        <h3>{ menu.menu.name }</h3>
+                        <img alt = { menu.menu.name } src = { menu.menu.image.url } />
+                        <p>{ menu.menu.description }</p>
+                        {
+                            menu.categories.map(category => (
+                                <MenuCategory key = { category._id } category = { category } />
+                            ))
+                        }
+                    </>
+                )
+            }
+        </StyledCompanyMenu>
+    );
+};
 
 export default CompanyMenu;

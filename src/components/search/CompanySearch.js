@@ -12,13 +12,13 @@ const StyledCompanySearch = styled.div`
 `;
 
 const CompanySearch = () => {
-    const { searchCompanies } = useContext(AppContext);
+    const { companies } = useContext(AppContext);
     const [filter, setFilter] = useState('');
     const handleChange = event => {
         setFilter(event.target.value);
     }
     const lowercasedFilter = filter.toLowerCase();
-    const filteredData = searchCompanies.filter(item => {
+    const filteredData = companies.filter(item => {
         return Object.keys(item).some(key =>
             item[key].toLowerCase().includes(lowercasedFilter)
         );
@@ -27,15 +27,15 @@ const CompanySearch = () => {
         <StyledCompanySearch>
             <h5>Company Search</h5>
             <SearchInput type='text' value={ filter } onChange={ handleChange } />
-            {
-                filteredData.map(item => (
-                    <div key={ item._id }>
-                        <div>
+            <ul>
+                {
+                    filteredData.map(item => (
+                        <li key={ item._id }>
                             <Link to = { `/company/${ item._id }` }>{ item.name }</Link>
-                        </div>
-                    </div>
-                ))
-            }
+                        </li>
+                    ))
+                }
+            </ul>
         </StyledCompanySearch>
     );
 }

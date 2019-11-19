@@ -9,7 +9,6 @@ import SelectedMarker from './SelectedMarker';
 
 const Map = () => {
     const { companies, selectedCompany } = useContext(AppContext);
-    console.log(companies);
     const { lat, lng, error } = usePosition();
     if (error) console.log(error);
     return (
@@ -41,7 +40,7 @@ const Map = () => {
                         ))
                     )
                 }
-                { // show info window if there is a selected company on a map..
+                { // show info window on a map if there is a selected company..
                     selectedCompany && (
                         <SelectedMarker />
                     )

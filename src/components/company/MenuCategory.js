@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
+import MenuItem from './MenuItem';
+
+// fetch menu items url..
+const URL = 'https://gentle-retreat-42311.herokuapp.com/api/items';
 
 const StyledMenuCategory = styled.div`
     & > h4 {
@@ -7,42 +12,43 @@ const StyledMenuCategory = styled.div`
     }
 `;
 
-const ItemImage = styled.img`
-    width: 100%;
-    height: auto;
-`;
-
 const MenuCategory = (props) => {
-    const [category, setCategory] = useState(props.category);
     const [items, setItems] = useState([]);
-    const fetchItems = async (categoryId) => {
-    	const response = await fetch(`https://gentle-retreat-42311.herokuapp.com/api/items/${ categoryId }`);
-    	const result = await response.json();
-    	console.log(result);
-    	setItems(result);
-    }
+    // fetching menu items by category..
     useEffect(() => {
-    	fetchItems(category._id);
-    }, [category._id]);
+        const CancelToken = axios.CancelToken;
+        const source = CancelToken.source();
+        const loadData = () => {
+            try {
+                axios.get(`${ URL }/${ props.category._id }`, { cancelToken: source.token }).then(result => {
+                    setItems(result.data);
+                });
+            } catch(error) {
+                if (axios.isCancel(error)) {
+                    console.log('Api call is canceled!');
+                } else {
+                    throw error;
+                }
+            }
+        }
+        loadData();
+        // cleaning up api call on component unmount..
+        return () => {
+            source.cancel();
+        };
+    }, [props.category._id]);
     return (
         <StyledMenuCategory>
-            <h4>{ category.name }</h4>
+            <h4>{ props.category.name }</h4>
             {
-                items.map((item, index) => (
-                    <div key={ index }>
-                        <h4>{ item.name }</h4>
-                        <ItemImage src={ item.image.url } />
-                        <p>{ item.description }</p>
-                        <p><u>Calories</u></p>
-                        <p>carbs: { item.calories.carbs }</p>
-                        <p>fats: { item.calories.fats }</p>
-                        <p>proteins: { item.calories.proteins }</p>
-                        <hr />
-                    </div>
-                ))
+                items && (
+                    items.map(item => (
+                        <MenuItem key = { item._id } item = { item } />
+                    ))
+                )
             }
         </StyledMenuCategory>
     );
-}
+};
 
 export default MenuCategory;

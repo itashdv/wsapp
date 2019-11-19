@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import CompanySearch from './CompanySearch';
 import DishSearch from './DishSearch';
 
 const StyledSearch = styled.div`
-    padding: 10px;
     & > h4 {
         text-align: center;
     }
 `;
 
 const Search = () => {
-    const [company, setCompany] = useState(false);
+    const [company, setCompany] = useState(true);
     const [dish, setDish] = useState(false);
     const searchByCompany = event => {
         event.preventDefault();
@@ -35,6 +34,6 @@ const Search = () => {
             ) }
         </StyledSearch>
     );
-}
+};
 
 export default Search;
